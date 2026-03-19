@@ -656,7 +656,7 @@ footer {
 <!-- ====== NAVIGATION ====== -->
 <nav id="navbar">
   <div class="container">
-    <a href="#" class="logo" onclick="showPage('home')">
+    <a href="#" class="logo" onclick="showPage('home', event)">
       <span class="logo-dot"></span>
       <span data-he="אוטומציות חכמות" data-en="Smart Automations"></span>
     </a>
@@ -666,10 +666,10 @@ footer {
       </svg>
     </button>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#" onclick="showPage('home')" data-he="ראשי" data-en="Home"></a></li>
-      <li><a href="#services" onclick="showPage('home')" data-he="שירותים" data-en="Services"></a></li>
-      <li><a href="#contact" onclick="showPage('home')" data-he="צור קשר" data-en="Contact"></a></li>
-      <li><a href="#" onclick="showPage('privacy')" data-he="פרטיות" data-en="Privacy"></a></li>
+      <li><a href="#" onclick="showPage('home', event)" data-he="ראשי" data-en="Home"></a></li>
+      <li><a href="#services" onclick="showPage('home', event, 'services')" data-he="שירותים" data-en="Services"></a></li>
+      <li><a href="#contact" onclick="showPage('home', event, 'contact')" data-he="צור קשר" data-en="Contact"></a></li>
+      <li><a href="#" onclick="showPage('privacy', event)" data-he="פרטיות" data-en="Privacy"></a></li>
       <li>
         <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
       </li>
@@ -971,9 +971,9 @@ footer {
   <div class="container">
     <div class="footer-content">
       <ul class="footer-links">
-        <li><a href="#" onclick="showPage('privacy')" data-he="מדיניות פרטיות" data-en="Privacy Policy"></a></li>
-        <li><a href="#" onclick="showPage('terms')" data-he="תנאי שימוש" data-en="Terms of Service"></a></li>
-        <li><a href="#contact" onclick="showPage('home')" data-he="צור קשר" data-en="Contact"></a></li>
+        <li><a href="#" onclick="showPage('privacy', event)" data-he="מדיניות פרטיות" data-en="Privacy Policy"></a></li>
+        <li><a href="#" onclick="showPage('terms', event)" data-he="תנאי שימוש" data-en="Terms of Service"></a></li>
+        <li><a href="#contact" onclick="showPage('home', event, 'contact')" data-he="צור קשר" data-en="Contact"></a></li>
       </ul>
       <div class="footer-copy">© 2026. <span data-he="כל הזכויות שמורות." data-en="All rights reserved."></span></div>
     </div>
@@ -1019,21 +1019,44 @@ function applyLang() {
 }
 
 // ====== PAGE ROUTING ======
-function showPage(pageId) {
+function showPage(pageId, event, section) {
+  if (event) event.preventDefault();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(`page-${pageId}`).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  window.location.hash = pageId === 'home' ? '' : pageId;
+  
+  if (section) {
+    setTimeout(() => {
+      const el = document.getElementById(section);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+    history.replaceState(null, '', '#' + section);
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', pageId === 'home' ? window.location.pathname : '#' + pageId);
+  }
   toggleMenu(true);
 }
 
-// Handle direct hash URLs (e.g. #privacy, #terms)
+// Handle direct hash URLs (e.g. #privacy, #terms, #services, #contact)
 function handleHash() {
   const hash = window.location.hash.replace('#', '');
-  const validPages = ['home', 'privacy', 'terms'];
-  const pageId = validPages.includes(hash) ? hash : 'home';
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(`page-${pageId}`).classList.add('active');
+  const pageRoutes = ['privacy', 'terms'];
+  const sections = ['services', 'contact', 'process'];
+  
+  if (pageRoutes.includes(hash)) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${hash}`).classList.add('active');
+    window.scrollTo({ top: 0 });
+  } else {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-home').classList.add('active');
+    if (sections.includes(hash)) {
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    }
+  }
 }
 
 window.addEventListener('hashchange', handleHash);
