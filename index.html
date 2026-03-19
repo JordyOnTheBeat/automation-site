@@ -1023,8 +1023,20 @@ function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(`page-${pageId}`).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.location.hash = pageId === 'home' ? '' : pageId;
   toggleMenu(true);
 }
+
+// Handle direct hash URLs (e.g. #privacy, #terms)
+function handleHash() {
+  const hash = window.location.hash.replace('#', '');
+  const validPages = ['home', 'privacy', 'terms'];
+  const pageId = validPages.includes(hash) ? hash : 'home';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${pageId}`).classList.add('active');
+}
+
+window.addEventListener('hashchange', handleHash);
 
 // ====== MOBILE MENU ======
 function toggleMenu(forceClose) {
@@ -1053,6 +1065,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // Init
 applyLang();
+handleHash();
 </script>
 </body>
 </html>
