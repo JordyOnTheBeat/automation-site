@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Automation Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Heebo:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #111114;
+  --bg-card: #16161a;
+  --bg-card-hover: #1c1c21;
+  --accent: #e8a838;
+  --accent-dim: #c4882a;
+  --accent-glow: rgba(232, 168, 56, 0.15);
+  --text-primary: #f0ede6;
+  --text-secondary: #9b9a97;
+  --text-muted: #5c5b58;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(232, 168, 56, 0.2);
+  --font-he: 'Heebo', sans-serif;
+  --font-en: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --radius: 16px;
+  --radius-sm: 8px;
+  --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+body {
+  font-family: var(--font-he);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body[dir="ltr"] { font-family: var(--font-en); }
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+::selection { background: var(--accent); color: var(--bg-primary); }
+
+a { color: inherit; text-decoration: none; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ============ NAV ============ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 16px 0;
+  transition: var(--transition);
+  background: transparent;
+}
+
+nav.scrolled {
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-dot {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  position: relative;
+}
+
+.nav-links a:hover { color: var(--text-primary); }
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--accent);
+  transition: var(--transition);
+}
+
+[dir="ltr"] .nav-links a::after { right: auto; left: 0; }
+
+.nav-links a:hover::after { width: 100%; }
+
+.lang-toggle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 1px;
+}
+
+.lang-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Mobile menu */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.menu-toggle svg { width: 24px; height: 24px; }
+
+@media (max-width: 768px) {
+  .menu-toggle { display: block; }
+  .nav-links {
+    position: fixed;
+    top: 0; right: -100%; width: 80%; height: 100vh;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    padding: 80px 32px 32px;
+    gap: 24px;
+    transition: right 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    border-left: 1px solid var(--border);
+  }
+  [dir="ltr"] .nav-links { right: auto; left: -100%; border-left: none; border-right: 1px solid var(--border); }
+  [dir="ltr"] .nav-links.open { left: 0; }
+  .nav-links.open { right: 0; }
+  .nav-links a { font-size: 18px; }
+}
+
+/* ============ PAGES ============ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232, 168, 56, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 168, 56, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  top: 20%; right: -10%;
+  filter: blur(80px);
+  animation: float-glow 8s ease-in-out infinite;
+}
+
+[dir="ltr"] .hero-glow { right: auto; left: -10%; }
+
+@keyframes float-glow {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-30px, 30px); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fade-up 0.8s 0.2s forwards;
+}
+
+.hero-tag::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hero h1 {
+  font-size: clamp(42px, 7vw, 80px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fade-up 0.8s 0.4s forwards;
+}
+
+.hero h1 .accent { color: var(--accent); }
+
+.hero p {
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 540px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fade-up 0.8s 0.6s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fade-up 0.8s 0.8s forwards;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+  background: var(--accent-dim);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px var(--accent-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  border-color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ============ SERVICES ============ */
+.services {
+  padding: 120px 0;
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.section-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.service-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px 28px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.service-card:hover {
+  border-color: var(--border-accent);
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+}
+
+.service-card:hover::before { opacity: 1; }
+
+.service-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+.service-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.service-card p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ============ PROCESS ============ */
+.process {
+  padding: 120px 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.step {
+  text-align: center;
+  padding: 24px;
+  position: relative;
+}
+
+.step-number {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.2;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.step h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ============ CONTACT ============ */
+.contact { padding: 120px 0; }
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.contact-info h2 {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.contact-info p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.contact-item-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  transition: var(--transition);
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-group textarea { resize: vertical; min-height: 120px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+/* ============ FOOTER ============ */
+footer {
+  padding: 48px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.footer-links a:hover { color: var(--text-secondary); }
+
+.footer-copy {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ============ LEGAL PAGES ============ */
+.legal-page {
+  padding: 120px 0 80px;
+  min-height: 100vh;
+}
+
+.legal-page h1 {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+
+.legal-page .legal-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-bottom: 48px;
+}
+
+.legal-page h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.legal-page p, .legal-page li {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.9;
+  margin-bottom: 12px;
+}
+
+.legal-page ul {
+  padding-right: 20px;
+  margin-bottom: 16px;
+}
+
+[dir="ltr"] .legal-page ul { padding-right: 0; padding-left: 20px; }
+
+/* ============ SCROLL ANIMATIONS ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ SCROLL BAR ============ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+</style>
+</head>
+<body dir="rtl">
+
+<!-- ====== NAVIGATION ====== -->
+<nav id="navbar">
+  <div class="container">
+    <a href="#" class="logo" onclick="showPage('home')">
+      <span class="logo-dot"></span>
+      <span data-he="אוטומציות חכמות" data-en="Smart Automations"></span>
+    </a>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" onclick="showPage('home')" data-he="ראשי" data-en="Home"></a></li>
+      <li><a href="#services" onclick="showPage('home')" data-he="שירותים" data-en="Services"></a></li>
+      <li><a href="#contact" onclick="showPage('home')" data-he="צור קשר" data-en="Contact"></a></li>
+      <li><a href="#" onclick="showPage('privacy')" data-he="פרטיות" data-en="Privacy"></a></li>
+      <li>
+        <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ====== HOME PAGE ====== -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-tag" data-he="אוטומציה עסקית" data-en="Business Automation"></div>
+        <h1>
+          <span data-he="הפכו את העסק שלכם ל" data-en="Turn your business into a "></span><br>
+          <span class="accent" data-he="מכונה חכמה" data-en="smart machine"></span>
+        </h1>
+        <p data-he="אנחנו בונים מערכות אוטומציה, אפליקציות ופתרונות דיגיטליים מותאמים אישית שחוסכים לכם זמן, כסף וכאב ראש. מהרעיון ועד המוצר — אנחנו מטפלים בהכל." data-en="We build custom automation systems, applications and digital solutions that save you time, money and headaches. From idea to product — we handle everything."></p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary" data-he="בואו נדבר" data-en="Let's Talk"></a>
+          <a href="#services" class="btn btn-ghost" data-he="מה אנחנו עושים ←" data-en="→ What We Do"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag" data-he="השירותים שלנו" data-en="Our Services"></div>
+        <h2 data-he="פתרונות שעובדים בשבילכם" data-en="Solutions That Work for You"></h2>
+        <p data-he="כל עסק הוא ייחודי. אנחנו מתאימים את הפתרון בדיוק לצרכים שלכם." data-en="Every business is unique. We tailor the solution to your exact needs."></p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-icon">⚡</div>
+          <h3 data-he="אוטומציות עסקיות" data-en="Business Automations"></h3>
+          <p data-he="חיבור מערכות, אוטומציית תהליכים, העברת מידע אוטומטית בין פלטפורמות — כל מה שחוסך עבודה ידנית חוזרת." data-en="System integration, process automation, automatic data flow between platforms — everything that eliminates repetitive manual work."></p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon">📱</div>
+          <h3 data-he="אפליקציות מותאמות" data-en="Custom Applications"></h3>
+          <p data-he="פיתוח אפליקציות ווב ומובייל מותאמות אישית לניהול העבודה שלכם — דשבורדים, מערכות CRM, כלי ניהול פרויקטים ועוד." data-en="Custom web and mobile app development to manage your work — dashboards, CRM systems, project management tools and more."></p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon">🔗</div>
+          <h3 data-he="אינטגרציות ו-API" data-en="Integrations & APIs"></h3>
+          <p data-he="חיבור בין WhatsApp, Gmail, Google Calendar, מערכות הנהלת חשבונות ועוד — הכל מדבר עם הכל." data-en="Connecting WhatsApp, Gmail, Google Calendar, accounting systems and more — everything talks to everything."></p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon">🤖</div>
+          <h3 data-he="פתרונות AI" data-en="AI Solutions"></h3>
+          <p data-he="ניתוח מסמכים אוטומטי, עיבוד טקסט חכם, צ׳אטבוטים ופתרונות מבוססי בינה מלאכותית שמייעלים את העבודה." data-en="Automatic document analysis, smart text processing, chatbots and AI-powered solutions that streamline your workflow."></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag" data-he="איך זה עובד" data-en="How It Works"></div>
+        <h2 data-he="4 צעדים למערכת חלומות" data-en="4 Steps to Your Dream System"></h2>
+      </div>
+      <div class="process-steps">
+        <div class="step reveal">
+          <div class="step-number">01</div>
+          <h3 data-he="שיחת היכרות" data-en="Discovery Call"></h3>
+          <p data-he="מבינים את העסק, את האתגרים ואת החלום" data-en="Understanding your business, challenges and vision"></p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">02</div>
+          <h3 data-he="תכנון ועיצוב" data-en="Plan & Design"></h3>
+          <p data-he="בונים מוק-אפ ומאשרים שזה בדיוק מה שרציתם" data-en="Building a mockup and making sure it's exactly what you need"></p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">03</div>
+          <h3 data-he="פיתוח וחיבור" data-en="Build & Connect"></h3>
+          <p data-he="מפתחים, מחברים אינטגרציות ובודקים הכל" data-en="Developing, connecting integrations and testing everything"></p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">04</div>
+          <h3 data-he="השקה וליווי" data-en="Launch & Support"></h3>
+          <p data-he="משיקים ומלווים אתכם עד שהכל רץ חלק" data-en="Launching and supporting you until everything runs smoothly"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-layout">
+        <div class="contact-info reveal">
+          <h2 data-he="בואו נדבר" data-en="Let's Talk"></h2>
+          <p data-he="יש לכם רעיון? תהליך שרוצים לייעל? מוצר שרוצים לבנות? ספרו לנו ונחזור אליכם תוך 24 שעות." data-en="Have an idea? A process to optimize? A product to build? Tell us and we'll get back to you within 24 hours."></p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <div class="contact-item-icon">📧</div>
+              <span>tayaryardenn@gmail.com</span>
+            </div>
+            <div class="contact-item">
+              <div class="contact-item-icon">📍</div>
+              <span data-he="ישראל" data-en="Israel"></span>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form reveal">
+          <div class="form-row">
+            <div class="form-group">
+              <label data-he="שם מלא" data-en="Full Name"></label>
+              <input type="text" data-placeholder-he="הכניסו את השם שלכם" data-placeholder-en="Enter your name">
+            </div>
+            <div class="form-group">
+              <label data-he="טלפון" data-en="Phone"></label>
+              <input type="tel" data-placeholder-he="מספר הטלפון שלכם" data-placeholder-en="Your phone number">
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-he="אימייל" data-en="Email"></label>
+            <input type="email" data-placeholder-he="האימייל שלכם" data-placeholder-en="Your email address">
+          </div>
+          <div class="form-group">
+            <label data-he="מה אתם מחפשים?" data-en="What are you looking for?"></label>
+            <select>
+              <option value="" data-he="בחרו סוג שירות" data-en="Select a service type"></option>
+              <option value="automation" data-he="אוטומציה עסקית" data-en="Business Automation"></option>
+              <option value="app" data-he="פיתוח אפליקציה" data-en="App Development"></option>
+              <option value="integration" data-he="אינטגרציות" data-en="Integrations"></option>
+              <option value="ai" data-he="פתרון AI" data-en="AI Solution"></option>
+              <option value="other" data-he="אחר" data-en="Other"></option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-he="ספרו לנו עוד" data-en="Tell us more"></label>
+            <textarea data-placeholder-he="תארו בקצרה את מה שאתם מחפשים..." data-placeholder-en="Briefly describe what you're looking for..."></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" data-he="שלחו הודעה" data-en="Send Message"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ====== PRIVACY PAGE ====== -->
+<div class="page" id="page-privacy">
+  <div class="legal-page">
+    <div class="container" style="max-width:800px">
+      <h1 data-he="מדיניות פרטיות" data-en="Privacy Policy"></h1>
+      <div class="legal-date" data-he="עודכן לאחרונה: מרץ 2026" data-en="Last updated: March 2026"></div>
+
+      <div id="privacy-he" class="legal-content">
+        <h2>מבוא</h2>
+        <p>אנו מכבדים את פרטיותכם ומחויבים להגן על המידע האישי שלכם. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגינים על המידע שלכם כאשר אתם משתמשים באתר ובשירותים שלנו.</p>
+
+        <h2>מידע שאנו אוספים</h2>
+        <p>אנו עשויים לאסוף את סוגי המידע הבאים:</p>
+        <ul>
+          <li>מידע אישי שאתם מספקים לנו ישירות דרך טופס יצירת קשר: שם, אימייל, טלפון ופרטי הפנייה.</li>
+          <li>מידע טכני שנאסף אוטומטית: כתובת IP, סוג דפדפן, זמני גישה ודפים שנצפו.</li>
+          <li>מידע עסקי שנאסף במסגרת מתן השירות, בהתאם להסכם שנחתם עמכם.</li>
+        </ul>
+
+        <h2>כיצד אנו משתמשים במידע</h2>
+        <p>אנו משתמשים במידע שנאסף על מנת: לספק ולשפר את שירותינו, ליצור עמכם קשר בתגובה לפנייתכם, לשלוח עדכונים רלוונטיים (בהסכמתכם), ולעמוד בדרישות חוקיות.</p>
+
+        <h2>שיתוף מידע עם צדדים שלישיים</h2>
+        <p>איננו מוכרים את המידע האישי שלכם. אנו עשויים לשתף מידע עם ספקי שירות (כגון שירותי אחסון ענן ואנליטיקה) הפועלים מטעמנו ומחויבים לשמור על סודיות המידע. בנוסף, נשתף מידע אם נדרש לכך על פי חוק.</p>
+
+        <h2>אבטחת מידע</h2>
+        <p>אנו נוקטים באמצעי אבטחה סבירים כדי להגן על המידע שלכם מפני גישה בלתי מורשית, שינוי, חשיפה או השמדה.</p>
+
+        <h2>עוגיות (Cookies)</h2>
+        <p>האתר עשוי להשתמש בעוגיות לצורך שיפור חוויית הגלישה וניתוח שימוש. תוכלו לשלוט בהגדרות העוגיות דרך הדפדפן שלכם.</p>
+
+        <h2>שימוש ב-WhatsApp Business</h2>
+        <p>אנו עשויים להשתמש ב-WhatsApp Business API על מנת לתקשר עם לקוחות ולנהל תהליכים עסקיים. הודעות שנשלחות ומתקבלות דרך WhatsApp כפופות למדיניות הפרטיות של Meta. אנו שומרים הודעות לצורך ניהול השירות בלבד ואינם משתפים אותן עם צדדים שלישיים.</p>
+
+        <h2>זכויותיכם</h2>
+        <p>בהתאם לחוק הגנת הפרטיות, הינכם זכאים: לעיין במידע שנשמר אודותיכם, לבקש תיקון או מחיקת מידע, ולהתנגד לשימוש במידע לצורכי שיווק.</p>
+
+        <h2>יצירת קשר</h2>
+        <p>לשאלות בנוגע למדיניות פרטיות זו, אנא פנו אלינו בכתובת: tayaryardenn@gmail.com</p>
+
+        <h2>שינויים במדיניות</h2>
+        <p>אנו שומרים לעצמנו את הזכות לעדכן מדיניות זו מעת לעת. שינויים יפורסמו בדף זה עם תאריך עדכון חדש.</p>
+      </div>
+
+      <div id="privacy-en" class="legal-content" style="display:none">
+        <h2>Introduction</h2>
+        <p>We respect your privacy and are committed to protecting your personal information. This policy explains how we collect, use and protect your information when you use our website and services.</p>
+
+        <h2>Information We Collect</h2>
+        <p>We may collect the following types of information:</p>
+        <ul>
+          <li>Personal information you provide directly through the contact form: name, email, phone and inquiry details.</li>
+          <li>Technical information collected automatically: IP address, browser type, access times and pages viewed.</li>
+          <li>Business information collected during service delivery, according to the agreement signed with you.</li>
+        </ul>
+
+        <h2>How We Use Information</h2>
+        <p>We use collected information to: provide and improve our services, contact you in response to your inquiry, send relevant updates (with your consent), and comply with legal requirements.</p>
+
+        <h2>Sharing Information with Third Parties</h2>
+        <p>We do not sell your personal information. We may share information with service providers (such as cloud hosting and analytics services) acting on our behalf who are required to maintain confidentiality. Additionally, we will share information if required by law.</p>
+
+        <h2>Data Security</h2>
+        <p>We take reasonable security measures to protect your information from unauthorized access, alteration, disclosure or destruction.</p>
+
+        <h2>Cookies</h2>
+        <p>The website may use cookies to improve browsing experience and analyze usage. You can control cookie settings through your browser.</p>
+
+        <h2>Use of WhatsApp Business</h2>
+        <p>We may use the WhatsApp Business API to communicate with clients and manage business processes. Messages sent and received through WhatsApp are subject to Meta's privacy policy. We store messages for service management purposes only and do not share them with third parties.</p>
+
+        <h2>Your Rights</h2>
+        <p>Under applicable privacy law, you are entitled to: review information stored about you, request correction or deletion of information, and object to the use of information for marketing purposes.</p>
+
+        <h2>Contact Us</h2>
+        <p>For questions regarding this privacy policy, please contact us at: tayaryardenn@gmail.com</p>
+
+        <h2>Changes to This Policy</h2>
+        <p>We reserve the right to update this policy from time to time. Changes will be posted on this page with a new update date.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TERMS PAGE ====== -->
+<div class="page" id="page-terms">
+  <div class="legal-page">
+    <div class="container" style="max-width:800px">
+      <h1 data-he="תנאי שימוש" data-en="Terms of Service"></h1>
+      <div class="legal-date" data-he="עודכן לאחרונה: מרץ 2026" data-en="Last updated: March 2026"></div>
+
+      <div id="terms-he" class="legal-content">
+        <h2>כללי</h2>
+        <p>ברוכים הבאים לאתר שלנו. השימוש באתר ובשירותים שלנו כפוף לתנאים הבאים. בשימוש באתר, אתם מסכימים לתנאים אלו.</p>
+
+        <h2>השירותים</h2>
+        <p>אנו מספקים שירותי פיתוח תוכנה, אוטומציה עסקית, אינטגרציות ופתרונות דיגיטליים מותאמים אישית. היקף השירות המדויק, לוחות הזמנים והתמחור ייקבעו בהסכם נפרד.</p>
+
+        <h2>קניין רוחני</h2>
+        <p>כל התכנים באתר, כולל עיצוב, טקסטים, לוגו וגרפיקה, הם רכושנו ומוגנים בזכויות יוצרים. קוד ומערכות שפותחו עבור לקוחות יהיו בבעלותם בכפוף לתנאי ההסכם.</p>
+
+        <h2>הגבלת אחריות</h2>
+        <p>השירותים ניתנים כפי שהם (as-is). איננו אחראים לנזקים עקיפים או תוצאתיים הנובעים משימוש בשירותים, מעבר למה שנקבע בהסכם השירות.</p>
+
+        <h2>סודיות</h2>
+        <p>אנו מתחייבים לשמור בסודיות מוחלטת על כל מידע עסקי או אישי שנחשף לנו במסגרת מתן השירות.</p>
+
+        <h2>ביטולים</h2>
+        <p>תנאי ביטול ייקבעו בהסכם השירות הספציפי. באופן כללי, ביטול פרויקט בתהליך עבודה יחייב תשלום עבור העבודה שבוצעה עד למועד הביטול.</p>
+
+        <h2>דין ושיפוט</h2>
+        <p>תנאים אלו כפופים לחוקי מדינת ישראל. סמכות השיפוט הבלעדית תהיה לבתי המשפט המוסמכים במחוז המרכז.</p>
+
+        <h2>יצירת קשר</h2>
+        <p>לשאלות בנוגע לתנאי השימוש, פנו אלינו: tayaryardenn@gmail.com</p>
+      </div>
+
+      <div id="terms-en" class="legal-content" style="display:none">
+        <h2>General</h2>
+        <p>Welcome to our website. Use of our website and services is subject to the following terms. By using the site, you agree to these terms.</p>
+
+        <h2>Services</h2>
+        <p>We provide software development, business automation, integrations and custom digital solutions. The exact scope of service, timelines and pricing will be determined in a separate agreement.</p>
+
+        <h2>Intellectual Property</h2>
+        <p>All content on this website, including design, text, logos and graphics, are our property and protected by copyright. Code and systems developed for clients will be owned by them subject to agreement terms.</p>
+
+        <h2>Limitation of Liability</h2>
+        <p>Services are provided as-is. We are not liable for indirect or consequential damages arising from use of services, beyond what is stipulated in the service agreement.</p>
+
+        <h2>Confidentiality</h2>
+        <p>We are committed to absolute confidentiality regarding all business or personal information disclosed to us during service delivery.</p>
+
+        <h2>Cancellations</h2>
+        <p>Cancellation terms will be determined in the specific service agreement. Generally, cancellation of a project in progress will require payment for work completed up to the cancellation date.</p>
+
+        <h2>Governing Law</h2>
+        <p>These terms are governed by the laws of the State of Israel. Exclusive jurisdiction shall be with the competent courts of the Central District.</p>
+
+        <h2>Contact Us</h2>
+        <p>For questions regarding these terms, contact us at: tayaryardenn@gmail.com</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <ul class="footer-links">
+        <li><a href="#" onclick="showPage('privacy')" data-he="מדיניות פרטיות" data-en="Privacy Policy"></a></li>
+        <li><a href="#" onclick="showPage('terms')" data-he="תנאי שימוש" data-en="Terms of Service"></a></li>
+        <li><a href="#contact" onclick="showPage('home')" data-he="צור קשר" data-en="Contact"></a></li>
+      </ul>
+      <div class="footer-copy">© 2026. <span data-he="כל הזכויות שמורות." data-en="All rights reserved."></span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ====== LANGUAGE SYSTEM ======
+let currentLang = 'he';
+
+function toggleLang() {
+  currentLang = currentLang === 'he' ? 'en' : 'he';
+  applyLang();
+}
+
+function applyLang() {
+  const isHe = currentLang === 'he';
+  document.documentElement.lang = currentLang;
+  document.body.dir = isHe ? 'rtl' : 'ltr';
+  document.body.style.fontFamily = isHe ? 'var(--font-he)' : 'var(--font-en)';
+
+  document.getElementById('langBtn').textContent = isHe ? 'EN' : 'עב';
+
+  // Update all text elements
+  document.querySelectorAll('[data-he]').forEach(el => {
+    el.textContent = isHe ? el.dataset.he : el.dataset.en;
+  });
+
+  // Update placeholders
+  document.querySelectorAll('[data-placeholder-he]').forEach(el => {
+    el.placeholder = isHe ? el.dataset.placeholderHe : el.dataset.placeholderEn;
+  });
+
+  // Toggle legal content
+  ['privacy', 'terms'].forEach(page => {
+    const he = document.getElementById(`${page}-he`);
+    const en = document.getElementById(`${page}-en`);
+    if (he && en) {
+      he.style.display = isHe ? 'block' : 'none';
+      en.style.display = isHe ? 'none' : 'block';
+    }
+  });
+}
+
+// ====== PAGE ROUTING ======
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${pageId}`).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toggleMenu(true);
+}
+
+// ====== MOBILE MENU ======
+function toggleMenu(forceClose) {
+  const nav = document.getElementById('navLinks');
+  if (forceClose) { nav.classList.remove('open'); return; }
+  nav.classList.toggle('open');
+}
+
+// ====== SCROLL EFFECTS ======
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ====== REVEAL ON SCROLL ======
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Init
+applyLang();
+</script>
+</body>
+</html>
